@@ -1,0 +1,20 @@
+# Built app and release zips (rebuild with source/build_mac.sh). The app template in source/macos/ is source, so keep it.
+*.app/
+!source/macos/*.app/
+*.zip
+
+# User data never lives here: papers, figures, settings and the BioCanvas icon library are in
+# ~/Library/Application Support/<tool>/. Keep it that way.
+library/
+projects/
+data/
+
+# Python, OS and test leftovers
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+*.log
+**/tests/_out/
+.DS_Store

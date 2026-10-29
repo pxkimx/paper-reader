@@ -1,0 +1,232 @@
+/* Paper Reader — visual styles. Each theme sets the tokens from style.css, plus a few signature rules.
+ * Only fonts that ship with macOS are used, so every style works offline.
+ * Pick one in ⚙ Settings, or compare them all at /styles.
+ */
+
+/* 1 ─ Modern Minimal: white space, black ink, pill controls */
+[data-style="minimal"] {
+  --bg: #fafafa; --paper: #fafafa; --paper-2: #ffffff; --surface: #ffffff; --input-bg: #f5f5f5;
+  --line: #ebebeb; --line-strong: #cfcfcf; --rule: #f0f0f0;
+  --ink: #111111; --ink-2: #555555; --muted: #727272;
+  --accent: #111111; --accent-soft: #f0f0f0; --on-accent: #ffffff;
+  --viewer-bg: #f0f0f0; --toolbar-bg: rgba(255,255,255,.9); --panel-bg: #ffffff;
+  --ui: -apple-system, "SF Pro Text", "Helvetica Neue", sans-serif; --font-head: -apple-system, "SF Pro Display", sans-serif;
+  --logo-font: -apple-system, "SF Pro Display", sans-serif;
+  --radius: 14px; --btn-radius: 999px; --note: #fff7c2;
+  --shadow: 0 1px 2px rgba(0,0,0,.04), 0 8px 24px rgba(0,0,0,.06); --page-shadow: 0 2px 18px rgba(0,0,0,.08);
+}
+[data-style="minimal"] .lib-head h1 { font-size: 44px; letter-spacing: -.03em; color: var(--ink); }
+[data-style="minimal"] .tabs { gap: 4px; padding: 10px; border: 0; }
+[data-style="minimal"] .tabs button { border: 0; border-radius: 999px; padding: 5px 12px; }
+[data-style="minimal"] .tabs button.active { background: #111; color: #fff; }
+[data-style="minimal"] .toolbar { backdrop-filter: blur(12px); }
+[data-style="minimal"] .panel-body h4 { color: var(--muted); }
+[data-style="minimal"] .fig-card .label { color: var(--ink); }
+
+/* 2 ─ Mid-Century Modern: cream, teal, burnt orange, mustard; Futura */
+[data-style="midcentury"] {
+  --bg: #f3e9d2; --paper: #f3e9d2; --paper-2: #f9f1df; --surface: #fffaf0; --input-bg: #fffaf0;
+  --line: #e2d0a6; --line-strong: #c9ad6f; --rule: #eadcb9;
+  --ink: #2b2118; --ink-2: #5a4632; --muted: #76644b;
+  --accent: #a74d21; --accent-soft: #f7dcc5; --on-accent: #fffaf0;
+  --viewer-bg: #3d6e69; --toolbar-bg: #2f5956; --toolbar-ink: #f9f1df; --panel-bg: #f9f1df;
+  --ui: "Avenir Next", "Avenir", sans-serif; --font-head: "Futura", "Avenir Next", sans-serif; --logo-font: "Futura", sans-serif;
+  --radius: 18px; --btn-radius: 999px;
+  --shadow: 0 2px 0 rgba(43,33,24,.08), 0 10px 24px rgba(43,33,24,.10); --page-shadow: 0 12px 30px rgba(0,0,0,.28);
+}
+[data-style="midcentury"] .lib-head h1 { font-size: 56px; text-transform: uppercase; letter-spacing: .04em; }
+[data-style="midcentury"] .lib-head { position: relative; }
+[data-style="midcentury"] .lib-head::after { content: ""; position: absolute; right: 0; top: 0; width: 120px; height: 60px;
+  background: radial-gradient(circle at 20px 30px, #e0a526 18px, transparent 19px), radial-gradient(circle at 60px 30px, #3d6e69 18px, transparent 19px), radial-gradient(circle at 100px 30px, #d2602a 18px, transparent 19px); }
+[data-style="midcentury"] .toolbar button { color: #f9f1df; border-color: rgba(249,241,223,.3); background: transparent; }
+[data-style="midcentury"] .toolbar button:hover { background: rgba(249,241,223,.12); }
+[data-style="midcentury"] .toolbar .tool.active { background: #e0a526; color: #2b2118; border-color: #e0a526; }
+[data-style="midcentury"] .toolbar button.primary { background: #d2602a; border-color: #d2602a; }
+[data-style="midcentury"] .zoom-label { color: #f9f1df; }
+[data-style="midcentury"] .tabs button.active { color: #2b2118; border-bottom: 4px solid #e0a526; }
+[data-style="midcentury"] .panel-body h4 { color: #3d6e69; font-family: "Futura", sans-serif; }
+[data-style="midcentury"] .page .num { color: #f9f1df; }
+
+/* 3 ─ Scandinavian: birch, linen, dusty blue, soft and airy */
+[data-style="scandi"] {
+  --bg: #f5f3ef; --paper: #f5f3ef; --paper-2: #fbfaf7; --surface: #ffffff; --input-bg: #f7f5f1;
+  --line: #e7e2d9; --line-strong: #d3ccbf; --rule: #efebe4;
+  --ink: #2f343a; --ink-2: #6a7178; --muted: #726c62;
+  --accent: #507081; --accent-soft: #e5edf0; --on-accent: #ffffff;
+  --viewer-bg: #e8e2d6; --toolbar-bg: #fbfaf7; --panel-bg: #fbfaf7;
+  --ui: "Avenir Next", "Avenir", sans-serif; --font-head: "Avenir Next", sans-serif; --logo-font: "Avenir Next", sans-serif;
+  --radius: 18px; --btn-radius: 12px; --note: #fbf1c8;
+  --shadow: 0 1px 1px rgba(60,50,30,.03), 0 12px 30px rgba(60,50,30,.07); --page-shadow: 0 6px 28px rgba(80,70,50,.12);
+}
+[data-style="scandi"] body { font-weight: 400; }
+[data-style="scandi"] .lib-head h1 { font-weight: 300; font-size: 52px; letter-spacing: -.01em; color: var(--ink); }
+[data-style="scandi"] .lib-head h1::after { content: "."; color: #c98b6b; }
+[data-style="scandi"] .panel-body h4 { text-transform: none; letter-spacing: 0; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+[data-style="scandi"] .panel-body h2 { font-weight: 500; }
+[data-style="scandi"] .panel-body { padding: 22px 26px 40px; }
+[data-style="scandi"] .tabs button.active { font-weight: 500; }
+[data-style="scandi"] .card { border-color: transparent; box-shadow: var(--shadow); }
+
+/* 4 ─ Swiss / International: Helvetica, grid, black rules, red */
+[data-style="swiss"] {
+  --bg: #ffffff; --paper: #ffffff; --paper-2: #ffffff; --surface: #ffffff; --input-bg: #ffffff;
+  --line: #000000; --line-strong: #000000; --rule: #f2f2f2;
+  --ink: #000000; --ink-2: #333333; --muted: #747474;
+  --accent: #e3000f; --accent-soft: #ffe8e8; --on-accent: #ffffff;
+  --viewer-bg: #e6e6e6; --toolbar-bg: #ffffff; --panel-bg: #ffffff;
+  --ui: "Helvetica Neue", Helvetica, Arial, sans-serif; --font-head: "Helvetica Neue", Helvetica, sans-serif; --logo-font: "Helvetica Neue", sans-serif;
+  --radius: 0px; --btn-radius: 0px; --border-w: 2px;
+  --shadow: none; --page-shadow: 0 0 0 1px #000;
+}
+[data-style="swiss"] .lib-head h1 { font-size: 72px; font-weight: 700; letter-spacing: -.04em; color: #000; line-height: .95; border-bottom: 8px solid #e3000f; padding-bottom: 10px; }
+[data-style="swiss"] .toolbar { border-bottom-width: 3px; }
+[data-style="swiss"] .tabs button { text-transform: uppercase; font-weight: 700; font-size: 11px; letter-spacing: .06em; color: #000; }
+[data-style="swiss"] .tabs button.active { color: #e3000f; border-bottom: 4px solid #e3000f; }
+[data-style="swiss"] .panel-body h2 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; }
+[data-style="swiss"] .panel-body h4 { color: #000; border-top: 2px solid #000; padding-top: 6px; }
+[data-style="swiss"] .lede { border-left-width: 8px; background: none; border-radius: 0; font-weight: 500; }
+[data-style="swiss"] .paper-card { box-shadow: none; }
+[data-style="swiss"] .resizer { background: #000; width: 3px; }
+
+/* 5 ─ Japandi / Washi: rice paper, sumi ink, vermilion seal */
+[data-style="japandi"] {
+  --bg: #eee8dd; --paper: #eee8dd; --paper-2: #f5f1e8; --surface: #faf7f0; --input-bg: #faf7f0;
+  --line: #d8cfbf; --line-strong: #bfb39e; --rule: #e6ded0;
+  --ink: #26221e; --ink-2: #5c554c; --muted: #6d6458;
+  --accent: #b23a26; --accent-soft: #f1e0d8; --on-accent: #faf7f0;
+  --viewer-bg: #d9d0c1; --toolbar-bg: #f5f1e8; --panel-bg: #f5f1e8;
+  --ui: "Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif; --font-head: "Hiragino Mincho ProN", "Songti SC", serif; --logo-font: "Hiragino Mincho ProN", serif;
+  --radius: 4px; --btn-radius: 3px;
+  --shadow: 0 1px 0 rgba(38,34,30,.06); --page-shadow: 0 1px 2px rgba(0,0,0,.08), 0 10px 26px rgba(60,40,20,.10);
+}
+[data-style="japandi"] .lib-head h1 { font-weight: 400; font-size: 50px; color: var(--ink); display: flex; align-items: center; gap: 18px; }
+[data-style="japandi"] .lib-head h1::before { content: "読"; font-size: 26px; color: #faf7f0; background: #b23a26; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 6px; }
+[data-style="japandi"] .panel-body h4 { color: var(--ink); font-family: var(--font-head); font-weight: 400; letter-spacing: .2em; }
+[data-style="japandi"] .panel-body h2 { font-weight: 400; }
+[data-style="japandi"] .tabs button.active { color: var(--ink); border-bottom-color: #b23a26; font-weight: 400; }
+[data-style="japandi"] .card { border-width: 0 0 1px 0; border-radius: 0; background: transparent; padding-left: 0; padding-right: 0; }
+
+/* 6 ─ Art Deco: midnight navy, gold, Didot */
+[data-style="deco"] {
+  --bg: #0e1828; --paper: #0e1828; --paper-2: #13203a; --surface: #172642; --input-bg: #0f1b30;
+  --line: #34486a; --line-strong: #c9a646; --rule: #1b2b48;
+  --ink: #f1e8d0; --ink-2: #cdbf9c; --muted: #988e72;
+  --accent: #d6b04c; --accent-soft: #2a2c2c; --on-accent: #0e1828;
+  --viewer-bg: #0a1220; --toolbar-bg: #0e1828; --toolbar-ink: #f1e8d0; --panel-bg: #13203a;
+  --ui: "Avenir Next", "Avenir", sans-serif; --font-head: "Didot", "Bodoni 72", serif; --logo-font: "Didot", serif;
+  --radius: 2px; --btn-radius: 2px; --note: #f3e4a6;
+  --tip-bg: #d6b04c; --tip-ink: #0e1828;
+  --shadow: 0 0 0 1px rgba(214,176,76,.18), 0 10px 30px rgba(0,0,0,.35); --page-shadow: 0 0 0 1px rgba(214,176,76,.4), 0 16px 40px rgba(0,0,0,.5);
+}
+[data-style="deco"] .lib-head h1 { font-size: 64px; font-weight: 400; letter-spacing: .08em; text-transform: uppercase; text-align: center; }
+[data-style="deco"] .lib-head p { text-align: center; }
+[data-style="deco"] .lib-head { border-top: 1px solid #d6b04c; border-bottom: 1px solid #d6b04c; padding: 18px 0; margin-bottom: 26px; outline: 1px solid rgba(214,176,76,.35); outline-offset: 5px; }
+[data-style="deco"] .toolbar { border-bottom: 1px solid #d6b04c; }
+[data-style="deco"] .panel-body h4 { letter-spacing: .25em; font-weight: 500; }
+[data-style="deco"] .tabs button { letter-spacing: .08em; text-transform: uppercase; font-size: 11px; }
+[data-style="deco"] .lede { background: transparent; border: 1px solid #d6b04c; border-radius: 0; font-family: "Didot", serif; font-size: 17px; }
+[data-style="deco"] .fig-img-wrap { border-color: #d6b04c; }
+
+/* 7 ─ Bauhaus: primary colours, heavy black lines, geometry */
+[data-style="bauhaus"] {
+  --bg: #f1ede3; --paper: #f1ede3; --paper-2: #f7f4ec; --surface: #ffffff; --input-bg: #ffffff;
+  --line: #111111; --line-strong: #111111; --rule: #e7e1d2;
+  --ink: #111111; --ink-2: #333333; --muted: #6d6a62;
+  --accent: #1c4fa1; --accent-soft: #fbe7a5; --on-accent: #ffffff;
+  --viewer-bg: #e2dccd; --toolbar-bg: #f1ede3; --panel-bg: #f7f4ec;
+  --ui: "Futura", "Avenir Next", sans-serif; --font-head: "Futura", sans-serif; --logo-font: "Futura", sans-serif;
+  --radius: 0px; --btn-radius: 0px; --border-w: 2px;
+  --shadow: 4px 4px 0 #111; --page-shadow: 6px 6px 0 #111;
+}
+[data-style="bauhaus"] .lib-head h1 { font-size: 60px; font-weight: 700; color: #111; text-transform: lowercase; display: flex; align-items: center; gap: 14px; }
+[data-style="bauhaus"] .lib-head h1::before { content: ""; width: 40px; height: 40px; background:
+  linear-gradient(#d7263d 0 0) 0 0 / 20px 20px no-repeat, radial-gradient(circle, #1c4fa1 9px, transparent 10px) 20px 0 / 20px 20px no-repeat,
+  conic-gradient(from 90deg at 0 100%, #f2c230 0 90deg, transparent 0) 0 20px / 20px 20px no-repeat, linear-gradient(#111 0 0) 20px 20px / 20px 20px no-repeat; }
+[data-style="bauhaus"] .toolbar { border-bottom: 4px solid #111; }
+[data-style="bauhaus"] .tool.active { background: #f2c230; color: #111; border-color: #111; }
+[data-style="bauhaus"] button.primary { background: #d7263d; border-color: #111; }
+[data-style="bauhaus"] .tabs button { font-weight: 700; color: #111; text-transform: lowercase; }
+[data-style="bauhaus"] .tabs button.active { background: #1c4fa1; color: #fff; border-bottom-color: #1c4fa1; }
+[data-style="bauhaus"] .panel-body h4 { color: #d7263d; }
+[data-style="bauhaus"] .fig-card .label { background: #f2c230; color: #111; padding: 0 5px; }
+[data-style="bauhaus"] .resizer { background: #111; width: 4px; }
+
+/* 8 ─ Dark Studio: charcoal UI, violet accent, bright pages */
+[data-style="dark"] {
+  --bg: #131417; --paper: #131417; --paper-2: #1a1c21; --surface: #202329; --input-bg: #16181c;
+  --line: #2d3038; --line-strong: #454a55; --rule: #1f2127;
+  --ink: #e9eaee; --ink-2: #a9aeb8; --muted: #868b96;
+  --accent: #9d8cff; --accent-soft: #2a2748; --on-accent: #0f0f14;
+  --viewer-bg: #0c0d10; --toolbar-bg: #17191d; --toolbar-ink: #e9eaee; --panel-bg: #17191d;
+  --ui: -apple-system, "SF Pro Text", sans-serif; --font-head: -apple-system, "SF Pro Display", sans-serif; --logo-font: -apple-system, "SF Pro Display", sans-serif;
+  --radius: 12px; --btn-radius: 8px; --note: #f4e58c;
+  --tip-bg: #f1f1f4; --tip-ink: #131417;
+  --shadow: 0 8px 30px rgba(0,0,0,.4); --page-shadow: 0 10px 40px rgba(0,0,0,.6);
+}
+[data-style="dark"] .lib-head h1 { font-size: 50px; letter-spacing: -.02em; background: linear-gradient(90deg, #9d8cff, #5cc8ff); -webkit-background-clip: text; background-clip: text; color: transparent; }
+[data-style="dark"] .dropzone { background: #17191d; }
+[data-style="dark"] .panel-body h4 { color: #9d8cff; }
+[data-style="dark"] .tabs button.active { color: #fff; border-bottom-color: #9d8cff; }
+[data-style="dark"] .hl-layer { mix-blend-mode: multiply; }
+
+/* 9 ─ Academic Classic: parchment, burgundy, Baskerville, small caps */
+[data-style="academic"] {
+  --bg: #f6f1e4; --paper: #f6f1e4; --paper-2: #fbf8ef; --surface: #fffdf6; --input-bg: #fffdf6;
+  --line: #ddd2ba; --line-strong: #bfae8a; --rule: #ece3cf;
+  --ink: #1f1a16; --ink-2: #55493e; --muted: #75695a;
+  --accent: #7b1e2b; --accent-soft: #f2e1de; --on-accent: #fffdf6;
+  --viewer-bg: #d7ccb6; --toolbar-bg: #fbf8ef; --panel-bg: #fbf8ef;
+  --ui: "Iowan Old Style", "Palatino", Georgia, serif; --font-head: "Baskerville", "Iowan Old Style", serif; --logo-font: "Baskerville", serif;
+  --radius: 4px; --btn-radius: 4px;
+  --shadow: 0 1px 2px rgba(60,40,20,.08); --page-shadow: 0 2px 4px rgba(60,40,20,.1), 0 12px 30px rgba(60,40,20,.12);
+}
+[data-style="academic"] body { font-size: 15px; }
+[data-style="academic"] .lib-head h1 { font-style: italic; font-weight: 400; font-size: 62px; color: #7b1e2b; }
+[data-style="academic"] .lib-head { border-bottom: 3px double #bfae8a; padding-bottom: 12px; margin-bottom: 24px; }
+[data-style="academic"] .panel-body h4 { font-family: var(--font-head); font-variant: small-caps; text-transform: none; letter-spacing: .08em; font-size: 15px; font-weight: 400; color: #7b1e2b; }
+[data-style="academic"] .panel-body h2 { font-size: 21px; font-weight: 400; }
+[data-style="academic"] .tabs button { font-variant: small-caps; letter-spacing: .04em; }
+[data-style="academic"] .lede { font-style: italic; background: transparent; }
+
+/* 10 ─ Library Card: manila index cards, typewriter, red stamp */
+[data-style="library"] {
+  --bg: #eadcbc; --paper: #eadcbc; --paper-2: #f4ead3; --surface: #fbf6e8; --input-bg: #fbf6e8;
+  --line: #cdb98d; --line-strong: #a88f5c; --rule: #bfd4e6;
+  --ink: #2c2823; --ink-2: #57503f; --muted: #675e4a;
+  --accent: #af2f29; --accent-soft: #f2d9cf; --on-accent: #fbf6e8;
+  --viewer-bg: #a9875a; --toolbar-bg: #f4ead3; --panel-bg: #f4ead3;
+  --ui: "American Typewriter", "Courier New", monospace; --font-head: "American Typewriter", serif; --logo-font: "American Typewriter", serif;
+  --radius: 3px; --btn-radius: 3px;
+  --shadow: 1px 2px 0 rgba(80,60,20,.15); --page-shadow: 2px 4px 14px rgba(40,25,5,.35);
+}
+[data-style="library"] body { font-size: 13.5px; }
+[data-style="library"] .lib-head h1 { font-size: 50px; font-weight: 700; color: #b3302a; transform: rotate(-2deg); display: inline-block; border: 4px solid #b3302a; padding: 2px 16px; border-radius: 6px; letter-spacing: .05em; text-transform: uppercase; }
+[data-style="library"] .card, [data-style="library"] .paper-card {
+  background: repeating-linear-gradient(var(--surface), var(--surface) 23px, #c7dbea 24px); border-top: 3px solid #d68a86; }
+[data-style="library"] .panel-body h4 { color: #b3302a; letter-spacing: .12em; }
+[data-style="library"] .tabs button.active { color: #2c2823; background: var(--surface); border: 1px solid var(--line); border-bottom-color: var(--surface); border-radius: 6px 6px 0 0; margin-bottom: -1px; }
+[data-style="library"] .tabs button { border-bottom: 0; }
+
+/* ─ Dark theme: the Light | Dark switch in the top bar (data-theme on <html>). It lays dark colours over whichever style
+ * is chosen (fonts and shapes stay); PDF pages, figures and every export keep their own print-friendly colours. */
+:root[data-theme="dark"] {
+  --bg: #131417; --paper: #131417; --paper-2: #1a1c21; --surface: #202329; --input-bg: #16181c;
+  --line: #2d3038; --line-strong: #454a55; --rule: #1f2127;
+  --ink: #e9eaee; --ink-2: #b4b9c2; --muted: #9097a3;
+  --accent: #a597ff; --accent-soft: #2a2748; --on-accent: #0f0f14; --danger: #ff8a80;
+  --viewer-bg: #0c0d10; --toolbar-bg: #17191d; --toolbar-ink: #e9eaee; --panel-bg: #17191d;
+  --note: #f4e58c; --tip-bg: #f1f1f4; --tip-ink: #131417;
+  --shadow: 0 8px 30px rgba(0,0,0,.4); --page-shadow: 0 10px 40px rgba(0,0,0,.6);
+  color-scheme: dark;
+}
+:root[data-theme="dark"] .dropzone { background: #17191d; }
+:root[data-theme="dark"] .hl-layer { mix-blend-mode: multiply; }
+:root[data-theme="dark"] button.ghost:hover { background: rgba(255,255,255,.08); }
+:root[data-theme="dark"] .card-foot select.s-reading { background: #3a3220; color: #f4d27a; border-color: #6b5a2a; }
+/* the switch's place in the library header */
+.lib-head { position: relative; }
+.lib-head .lib-theme { position: absolute; top: 4px; right: 0; }
+/* styles that hard-code dark text for tabs and headings: keep them readable in the dark theme */
+:root[data-theme="dark"][data-style] .tabs button.active { color: var(--ink); }
+:root[data-theme="dark"][data-style] .panel-body h4 { color: var(--accent); }
+:root[data-theme="dark"][data-style] .lede { color: var(--ink); }

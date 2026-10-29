@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script src="/static/frame.js"></script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Paper Reader</title>
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/themes.css">
+<script src="/static/themes.js"></script>
+<script>
+  // apply the style before first paint (?style= previews one without saving it). Until Light | Dark is chosen,
+  // the theme follows the style: the two dark styles start in dark, everything else in light.
+  (function () {
+    var p = new URLSearchParams(location.search), q = p.get("style") || p.get("theme"), t = "notebook";
+    try { t = JSON.parse(localStorage.getItem("pr.theme")) || t; } catch (e) {}
+    var s = q || t, r = document.documentElement;
+    r.dataset.style = s;
+    r.dataset.defaultTheme = s === "dark" || s === "deco" ? "dark" : "light";
+  })();
+</script>
+<script src="/static/theme-switch.js"></script>
+<script>
+  // the two dark styles have no light version: in the light theme they show as Notebook
+  // (a ?style= preview in the styles gallery still shows the style as it is)
+  if (document.documentElement.dataset.theme === "light" && /^(dark|deco)$/.test(document.documentElement.dataset.style)
+      && !/[?&](style|theme)=/.test(location.search)) document.documentElement.dataset.style = "notebook";
+</script>
+<script src="/static/vendor/pdf.min.js"></script>
+<script src="/static/vendor/pdf-lib.min.js"></script>
+<script src="/static/vendor/fontkit.umd.min.js"></script>
+</head>
+<body>
+
+<!-- ============ Library ============ -->
+<section id="library" class="view">
+  <header class="lib-head">
+    <span class="lib-theme" data-theme-switch></span>
+    <h1 class="hand">Paper Reader</h1>
+    <p>Drop a paper in. Get the summary, the jargon explained, and every figure dissected, then mark it up in your own hand.</p>
+  </header>
+  <div id="keyBanner" class="key-banner hidden">
+    <span>Turn on automatic AI analysis: sign in to Claude once (uses your Claude plan, no API key).</span>
+    <button class="primary small" id="keyBannerBtn">Set up</button>
+  </div>
+  <label id="dropzone" class="dropzone">
+    <input type="file" id="fileInput" accept="application/pdf" hidden>
+    <span class="hand big">+ drop a PDF here</span>
+    <span class="muted">or click to choose a file</span>
+  </label>
+  <div class="lib-links"><button class="ghost" id="termsBtn">📚 My terms</button></div>
+  <div class="lib-add">
+    <input id="fetchInput" placeholder="…or paste a DOI, arXiv ID or PDF link to download an open-access copy" autocomplete="off">
+    <button id="fetchBtn" class="primary">Add</button>
+  </div>
+  <div class="lib-tools">
+    <input id="libSearch" class="search" placeholder="Search your papers (title, authors, gist)…" autocomplete="off">
+    <div class="seg" id="libStatus"><button data-s="all">All</button><button data-s="to-read">To read</button><button data-s="reading">Reading</button><button data-s="done">Done</button></div>
+    <select id="libSort" title="Sort"><option value="added">Recently added</option><option value="opened">Recently opened</option><option value="title">Title A–Z</option></select>
+    <span id="libCount" class="muted small"></span>
+  </div>
+  <div id="paperList" class="paper-list"></div>
+  <footer class="lib-foot">
+    <button class="ghost small" id="libSettingsBtn">⚙ Settings</button>
+    <button class="ghost small" id="backupBtn" title="Download everything (papers, notes, analyses, terms) as one .zip">⇩ Back up library</button>
+    <label class="ghost small btn-like" title="Merge a backup .zip into this library">⇧ Restore…<input type="file" id="restoreInput" accept=".zip,application/zip" hidden></label>
+    <button class="ghost small" id="quitBtn">Quit Paper Reader</button>
+    <span class="muted small" id="versionLabel"></span>
+  </footer>
+</section>
+
+<!-- ============ Reader ============ -->
+<section id="reader" class="view hidden">
+  <header class="toolbar">
+    <button id="backBtn" class="ghost" title="Back to library">← Library</button>
+    <div class="title-wrap"><span id="paperTitle" class="paper-title"></span></div>
+
+    <div class="tools" role="toolbar">
+      <button class="tool active" data-mode="select" title="Select text (V)">↖ Select</button>
+      <button class="tool" data-mode="pen" title="Pen (P)">✎ Pen</button>
+      <button class="tool" data-mode="note" title="Sticky note (N)">✐ Note</button>
+      <button class="tool" data-mode="eraser" title="Eraser (E)">⌫ Erase</button>
+      <span class="sep"></span>
+      <span class="swatches" id="penColors"></span>
+    </div>
+
+    <div class="right-tools">
+      <span class="page-nav" title="Go to page (G)"><input id="pageInput" type="text" inputmode="numeric" value="1"> / <span id="pageCount">–</span></span>
+      <button id="findBtn" class="ghost" title="Find in paper (⌘F)">🔍</button>
+      <button id="nightBtn" class="ghost" title="Invert the PDF pages for night reading (the Light | Dark switch changes the app)">◐</button>
+      <button id="zoomOut" class="ghost" title="Zoom out">−</button>
+      <span id="zoomLabel" class="zoom-label">100%</span>
+      <button id="zoomIn" class="ghost" title="Zoom in">+</button>
+      <span data-theme-switch></span>
+      <button id="settingsBtn" class="ghost" title="Settings">⚙</button>
+      <button id="helpBtn" class="ghost" title="Keyboard shortcuts (?)">?</button>
+      <button id="exportBtn" class="primary" title="Export your marked-up PDF or reading notes">⇩ Export ▾</button>
+    </div>
+  </header>
+
+  <div class="workspace">
+    <div class="viewer-wrap">
+      <div id="findBar" class="find-bar hidden">
+        <input id="pdfFind" placeholder="Find in paper…" autocomplete="off">
+        <span id="findCount" class="muted small"></span>
+        <button id="findPrev" class="ghost small" title="Previous (⇧↩)">↑</button>
+        <button id="findNext" class="ghost small" title="Next (↩)">↓</button>
+        <button id="findClose" class="ghost small" title="Close (Esc)">✕</button>
+      </div>
+      <main id="viewer" class="viewer"></main>
+    </div>
+    <div id="resizer" class="resizer" title="Drag to resize"></div>
+    <aside id="panel" class="panel">
+      <nav class="tabs">
+        <button data-tab="summary" class="active">Summary</button>
+        <button data-tab="figures">Figures</button>
+        <button data-tab="glossary">Glossary</button>
+        <button data-tab="methods">Methods</button>
+        <button data-tab="notes">My notes</button>
+        <button data-tab="ask">Ask</button>
+      </nav>
+      <div id="panelBody" class="panel-body"></div>
+    </aside>
+  </div>
+</section>
+
+<!-- popups -->
+<div id="selPopup" class="popup hidden">
+  <span class="swatches" id="hlColors"></span>
+  <button data-act="explain" class="primary small">✨ Explain</button>
+  <button data-act="note" class="small">✐ Comment</button>
+  <button data-act="term" class="small" title="Save this term to My terms">☆ Term</button>
+  <button data-act="speak" class="small" title="Read aloud">🔊</button>
+</div>
+
+<div id="hlPopup" class="popup card hidden">
+  <textarea class="hand" placeholder="write a comment…" rows="3"></textarea>
+  <div class="row">
+    <span class="swatches"></span>
+    <span class="grow"></span>
+    <button data-act="explain" class="small">✨ Explain</button>
+    <button data-act="delete" class="small danger">Delete</button>
+  </div>
+</div>
+
+<div id="glossTip" class="gloss-tip hidden"></div>
+<div id="refPopup" class="popup card ref-popup hidden"></div>
+<div id="exportMenu" class="popup menu hidden">
+  <button data-export="pdf">⇩ Marked-up PDF <span class="muted small">highlights, pen, notes + notes page</span></button>
+  <button data-export="md">⇩ Reading notes (.md) <span class="muted small">for Notion, Obsidian, lab notebook</span></button>
+  <button data-export="print">⎙ Print / save notes as PDF <span class="muted small">for journal club</span></button>
+</div>
+
+<div id="figViewer" class="fig-viewer hidden">
+  <div class="fv-panel">
+    <header class="fv-head">
+      <span id="fvTitle" class="fv-title"></span>
+      <span id="fvCount" class="muted small"></span>
+      <button id="fvPrev" class="small" title="Previous figure (←)">←</button>
+      <button id="fvNext" class="small" title="Next figure (→)">→</button>
+      <button id="fvPage" class="small">Go to page</button>
+      <button id="fvClose" class="small" title="Close (Esc)">✕</button>
+    </header>
+    <div class="fv-body">
+      <div id="fvImgWrap" class="fv-img"><img id="fvImg" alt="figure" title="Click to zoom"></div>
+      <div id="fvText" class="fv-text panel-body"></div>
+    </div>
+  </div>
+</div>
+
+<dialog id="citeDlg" class="wide">
+  <form method="dialog">
+    <h3>❝ Cite this paper</h3>
+    <div id="citeBody"></div>
+    <div class="row end"><button class="primary">Done</button></div>
+  </form>
+</dialog>
+
+<dialog id="helpDlg">
+  <form method="dialog">
+    <h3>Keyboard shortcuts</h3>
+    <table class="keys">
+      <tr><td><kbd>V</kbd> <kbd>P</kbd> <kbd>N</kbd> <kbd>E</kbd></td><td>Select · Pen · Sticky note · Eraser</td></tr>
+      <tr><td><kbd>⌘F</kbd></td><td>Find in paper (<kbd>↩</kbd> next, <kbd>⇧↩</kbd> previous)</td></tr>
+      <tr><td><kbd>G</kbd></td><td>Go to page</td></tr>
+      <tr><td><kbd>F</kbd></td><td>Figure viewer (<kbd>←</kbd> <kbd>→</kbd> to step through)</td></tr>
+      <tr><td><kbd>⌘Z</kbd></td><td>Undo a mark</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td>Close / back to Select</td></tr>
+      <tr><td>Select text</td><td>Highlight (each colour has a meaning) · ✨ Explain · ✐ Comment · ☆ Term · 🔊 Read aloud</td></tr>
+      <tr><td>📚 My terms</td><td>Your saved terms from every paper; ▶ Study = flashcards (<kbd>space</kbd> show, <kbd>1</kbd> missed, <kbd>2</kbd> knew it)</td></tr>
+      <tr><td>◐</td><td>Invert the PDF pages for night reading</td></tr>
+      <tr><td><kbd>?</kbd></td><td>This list</td></tr>
+    </table>
+    <p class="muted small">Hover a citation number like [12] to see the reference; click it for DOI, PubMed and Scholar links.
+      Select text for highlight, comment or ✨ Explain. Drag the divider to resize; double-click it to reset.</p>
+    <div class="row end"><button class="primary">Got it</button></div>
+  </form>
+</dialog>
+
+<dialog id="settings">
+  <form method="dialog">
+    <h3>Settings</h3>
+    <label>Style
+      <div class="row"><select id="themeSelect" class="grow"></select>
+      <a class="chip" href="/styles" target="_blank">Compare all →</a></div>
+    </label>
+    <div class="engine-box" id="engineBox"></div>
+    <details class="small"><summary class="muted">Advanced: use an Anthropic API key instead</summary>
+    <label>Anthropic API key <span class="muted small" id="keyStatus"></span>
+      <div class="row"><input type="password" id="keyInput" class="grow" placeholder="sk-ant-…" autocomplete="off">
+      <button type="button" class="small" id="keySave">Save</button></div>
+    </label>
+    <p class="muted small" style="margin-top:-4px">Stored only on this Mac (~/Library/Application Support/PaperReader). Get one at console.anthropic.com.</p>
+    </details>
+    <label>What each highlight colour means
+      <div class="hl-labels" id="hlLabels"></div>
+    </label>
+    <label>Handwriting font
+      <select id="fontSelect"></select>
+    </label>
+    <div id="fontPreview" class="font-preview">The quick brown fox — 실험 결과가 놀라웠다!</div>
+    <label><input type="checkbox" id="handAll"> Use handwriting for the AI panel too</label>
+    <label><input type="checkbox" id="glossUnderline" checked> Underline glossary terms in the paper (hover for definition)</label>
+    <label>Explanation language
+      <select id="langSelect">
+        <option>English</option><option>Korean</option><option>Japanese</option>
+        <option>Chinese</option><option>Spanish</option><option>French</option><option>German</option>
+      </select>
+    </label>
+    <p class="muted small">Changing the language applies to new explanations. Use “Re-analyze” on the Summary tab to redo the breakdown.</p>
+    <div class="row end"><button class="primary">Done</button></div>
+  </form>
+</dialog>
+
+<dialog id="claudeDlg" class="wide">
+  <form method="dialog">
+    <h3>✨ AI breakdown with Claude.ai <span class="muted small">(no API key needed)</span></h3>
+    <ol class="steps">
+      <li><b>Copy the prompt.</b> <button type="button" class="primary small" id="claudeCopy">Copy prompt</button></li>
+      <li><b>Start a new chat in Claude.ai and attach this paper.</b>
+        <div class="row wrap" style="margin-top:6px"><button type="button" class="small" id="claudeOpen">Open Claude.ai ↗</button>
+        <button type="button" class="small" id="claudeReveal">Show PDF in Finder</button></div>
+        <span class="muted small">Drag the PDF into the chat, paste the prompt (⌘V) and send.</span></li>
+      <li><b>Copy Claude's whole reply and paste it here.</b>
+        <textarea id="claudePaste" rows="6" placeholder="Paste Claude's reply (the JSON block) here…"></textarea>
+        <div id="claudeErr" class="small" style="color:var(--danger)"></div></li>
+    </ol>
+    <div class="row end"><button value="cancel" class="ghost">Cancel</button><button type="button" class="primary" id="claudeImport">Import</button></div>
+  </form>
+</dialog>
+
+<dialog id="termsDlg" class="wide terms-dlg">
+  <form method="dialog">
+    <div id="termsListBox">
+      <div class="row"><h3 style="margin:0">📚 My terms</h3><span class="grow"></span><button type="button" class="primary small" id="termsStudy">▶ Study</button></div>
+      <p class="muted small">Your personal glossary from every paper. Study uses spaced repetition: terms you know come back less often.</p>
+      <input class="search" id="termsSearch" placeholder="Search terms…" autocomplete="off">
+      <div id="termsList" class="terms-list"></div>
+    </div>
+    <div id="termsStudyBox" class="hidden">
+      <div class="row"><h3 style="margin:0">Flashcards</h3><span class="grow"></span><span class="muted small" id="studyProgress"></span></div>
+      <div id="studyCard" class="study-card"></div>
+      <div id="studyBtns" class="row end"></div>
+    </div>
+    <div class="row end" style="margin-top:10px"><button class="ghost">Close</button></div>
+  </form>
+</dialog>
+
+<button id="speakStop" class="speak-stop hidden" title="Stop reading (Esc)">🔊 Reading aloud · ■ Stop</button>
+<div id="toast" class="toast hidden"></div>
+
+<script src="/static/extract.js"></script>
+<script src="/static/app.js"></script>
+<script src="/static/features.js"></script>
+<script src="/static/lifecycle-client.js"></script>
+</body>
+</html>
